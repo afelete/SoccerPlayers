@@ -3,6 +3,7 @@ package com.team1.soccerplayers;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -345,6 +346,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = null;
             showProgress(false);
         }
+    }
+
+    //method to skip the login activity and display list of players activity
+    // in order for the user to configure his profile
+    public void skipLogin(View view){
+        //Do something in response to the click of the button
+        Intent intent = new Intent(this,DisplayPlayersActivity.class);
+        startActivity(intent);
     }
 }
 
