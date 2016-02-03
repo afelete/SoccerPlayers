@@ -72,6 +72,12 @@
                 android:text="@string/action_sign_in"
                 android:textStyle="bold" />
 
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Skip"
+                android:id="@+id/skip_button" />
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
