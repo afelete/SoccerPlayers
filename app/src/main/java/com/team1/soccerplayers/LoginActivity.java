@@ -3,6 +3,7 @@ package com.team1.soccerplayers;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -28,6 +29,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,10 +63,24 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private static String MY_PREFS_NAME = "SoccerCapstoneUserAccount";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Get the shared preferences
+        SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+        String name = prefs.getString("id", null);
+        if (name != null) {
+            int idOfUser = prefs.getInt("id", 0); //0 is the default value.
+            Toast.makeText(LoginActivity.this, "User name: " + name, Toast.LENGTH_SHORT).show();
+            /*
+            * TODO
+            * Switch to Selected Player list
+             */
+        }
+
         setContentView(R.layout.activity_login);
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -187,6 +203,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(true);
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
+
+            // ****TEST**** setting the sharedpreference
+            SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
+            editor.putString("name", email);
+            editor.putInt("id", 1111);
+            editor.commit();
+            // Toast.makeText(LoginActivity.this, "Shared preference created", Toast.LENGTH_SHORT).show();
         }
     }
 
