@@ -72,7 +72,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         // Get the shared preferences
         SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
-        String name = prefs.getString("id", null);
+        String name = prefs.getString("name", null);
         if (name != null) {
             int idOfUser = prefs.getInt("id", 0); //0 is the default value.
             Toast.makeText(LoginActivity.this, "User name: " + name, Toast.LENGTH_SHORT).show();
