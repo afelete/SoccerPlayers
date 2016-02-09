@@ -23,9 +23,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DisplayPlayersActivity"
-            android:label="@string/display_players"
+            android:name=".ScrollingActivity"
+            android:label="@string/title_activity_scrolling"
+            android:parentActivityName=".LoginActivity"
             android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.team1.soccerplayers.LoginActivity" />
         </activity>
     </application>
 

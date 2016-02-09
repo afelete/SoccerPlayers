@@ -3,7 +3,6 @@ package com.team1.soccerplayers;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
@@ -369,12 +368,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = null;
             showProgress(false);
         }
-    }
-    //method to display the next activity
-    public void skipLogin(View view){
-        //create an intent and display activity_dispaly_players
-        Intent intent = new Intent(this,DisplayPlayersActivity.class);
-        startActivity(intent);
     }
 }
 
