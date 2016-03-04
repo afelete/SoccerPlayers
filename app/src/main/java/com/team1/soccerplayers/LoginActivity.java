@@ -3,7 +3,6 @@ package com.team1.soccerplayers;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
@@ -72,7 +71,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         // Get the shared preferences
         SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
-        String name = prefs.getString("id", null);
+        String name = prefs.getString("name", null);
         if (name != null) {
             int idOfUser = prefs.getInt("id", 0); //0 is the default value.
             Toast.makeText(LoginActivity.this, "User name: " + name, Toast.LENGTH_SHORT).show();
@@ -369,12 +368,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = null;
             showProgress(false);
         }
-    }
-    //method to display the next activity
-    public void skipLogin(View view){
-        //create an intent and display activity_dispaly_players
-        Intent intent = new Intent(this,DisplayPlayersActivity.class);
-        startActivity(intent);
     }
 }
 
