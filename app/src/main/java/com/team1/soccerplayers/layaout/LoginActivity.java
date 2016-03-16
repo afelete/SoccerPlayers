@@ -1,8 +1,9 @@
-package com.team1.soccerplayers;
+package com.team1.soccerplayers.layaout;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
@@ -30,6 +31,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.team1.soccerplayers.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -368,6 +371,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = null;
             showProgress(false);
         }
+    }
+    public void skipLogin(View view){
+        Intent intent = new Intent(this,DisplayPlayersActivity.class);
+        startActivity(intent);
     }
 }
 
