@@ -14,6 +14,7 @@
        used in the textColor attribute causes its text color to change when its parent
        is checked or unchecked.
    -->
+
     <ImageView
         android:duplicateParentState="true"
         android:layout_width="150dp"

@@ -1,14 +1,12 @@
-package com.team1.soccerplayers.layaout;
+package com.team1.soccerplayers.layout;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ListView;
-import android.app.ListActivity;
 import android.widget.SimpleAdapter;
 
 import com.team1.soccerplayers.R;
@@ -21,33 +19,27 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.List;
 
-
-public class DisplayPlayersActivity extends ListActivity {
-    // List of Player objects representing the Players
-    ListView mListView;
+public class DisplayFavoritePlayersActivity extends AppCompatActivity {
+    ListView favoriteListView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_display_players);
+        setContentView(R.layout.activity_display_favorite_players);
 
-        //receive the intent and initiate the view
-       //setListAdapter(new MyAdapter());
         // create ArrayAdapter to bind weatherList to the weatherListView
         String strUrl = "http://dhcp-141-216-26-99.umflint.edu/index.php";//baseUrl + module+".php";
         DownloadTask downloadTask = new DownloadTask();
         downloadTask.execute(strUrl);
-
-        mListView = (ListView) findViewById(android.R.id.list);
-        Intent intent = getIntent();
+        favoriteListView = (ListView) findViewById(android.R.id.list);
     }
 
     //private method to download the url
-    private String downloadUrl(String strUrl) throws IOException{
+    private String downloadUrl(String strUrl) throws IOException {
 
         String data = null;
         try{
@@ -67,7 +59,7 @@ public class DisplayPlayersActivity extends ListActivity {
         return data;
     }
 
-    private class DownloadTask extends AsyncTask<String, Integer, String>{
+    private class DownloadTask extends AsyncTask<String, Integer, String> {
 
         String data = null;
         @Override
@@ -75,7 +67,7 @@ public class DisplayPlayersActivity extends ListActivity {
             try{
                 data = downloadUrl(url[0]);
             }catch (Exception e){
-                Log.d("Baground Task",e.toString());
+                Log.d("Baground Task", e.toString());
             }
             return data;
         }
@@ -111,24 +103,24 @@ public class DisplayPlayersActivity extends ListActivity {
             }
 
             String[] from = {"photo","details"};
-            int[] to = {R.id.playersImageView,R.id.descText};
+            int[] to = {R.id.favoriteImageView,R.id.favoriteText};
 
-            return (new SimpleAdapter(getBaseContext(),players,R.layout.list_item,from,to));
+            return (new SimpleAdapter(getBaseContext(),players,R.layout.list_item2,from,to));
         }
 
 
         @Override
         protected void onPostExecute(SimpleAdapter adapter){
-            mListView.setAdapter(adapter);
+            favoriteListView.setAdapter(adapter);
             for (int i=0; i<adapter.getCount();i++){
                 HashMap<String, Object> hm = (HashMap<String, Object>) adapter.getItem(i);
                 String imgUrl = (String) hm.get("photo_path");
                 ImageLoaderTask imageLoaderTask = new ImageLoaderTask();
 
-               // HashMap<String, Object> hmDownload = new HashMap<>();
+                // HashMap<String, Object> hmDownload = new HashMap<>();
                 hm.put("photo_path",imgUrl );
                 hm.put("position",i);
-               imageLoaderTask.execute(hm);
+                imageLoaderTask.execute(hm);
             }
         }
 
@@ -167,14 +159,12 @@ public class DisplayPlayersActivity extends ListActivity {
 
         @Override
         protected void onPostExecute(HashMap<String, Object> result) {
-           String path = (String) result.get("photo");
+            String path = (String) result.get("photo");
             int position = (Integer) result.get("position");
-            SimpleAdapter adapter = (SimpleAdapter) mListView.getAdapter();
+            SimpleAdapter adapter = (SimpleAdapter) favoriteListView.getAdapter();
             HashMap<String, Object> hm = (HashMap<String, Object>) adapter.getItem(position);
             hm.put("photo", path);
             adapter.notifyDataSetChanged();
         }
     }
-
-
 }

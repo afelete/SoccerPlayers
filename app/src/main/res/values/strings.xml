@@ -27,4 +27,7 @@
     <string name="module_name">first</string>
     <string name="read_error">Unable to read players Data</string>
     <string name="connection_error">Unable to establish a connection to the cloud</string>
+    <string name="title_activity_display_favorite_players">DisplayFavoritePlayers</string>
+    <string name="save_description">Tapped to save your favorite players in your profile</string>
+    <string name="title_activity_activity_favorite_players">ActivityFavoritePlayers</string>
 </resources>
