@@ -1,14 +1,11 @@
 package com.team1.soccerplayers.layout;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
@@ -27,30 +24,19 @@ import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.List;
 
-public class DisplayFavoritePlayersActivity extends AppCompatActivity {
-    ListView favoriteListView;
+public class PlayerInfoActivity extends AppCompatActivity {
+    ListView infoListView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_display_favorite_players);
-
-        // create ArrayAdapter to bind weatherList to the weatherListView
+        setContentView(R.layout.activity_player_info);
         String strUrl = "http://dhcp-141-216-26-99.umflint.edu/index.php";//baseUrl + module+".php";
         DownloadTask downloadTask = new DownloadTask();
         downloadTask.execute(strUrl);
-        favoriteListView = (ListView) findViewById(android.R.id.list);
-        favoriteListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
+        infoListView = (ListView) findViewById(android.R.id.list);
 
-                    profileView(view);
-            }
-        });
     }
-    public void profileView(View view){
-        Intent intent = new Intent(this,PlayerInfoActivity.class);
-        startActivity(intent);
-    }
+
     //private method to download the url
     private String downloadUrl(String strUrl) throws IOException {
 
@@ -115,16 +101,16 @@ public class DisplayFavoritePlayersActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            String[] from = {"photo","details"};
-            int[] to = {R.id.favoriteImageView,R.id.favoriteText};
+            String[] from = {"details"};
+            int[] to = {R.id.infoText};
 
-            return (new SimpleAdapter(getBaseContext(),players,R.layout.list_item_favorite,from,to));
+            return (new SimpleAdapter(getBaseContext(),players,R.layout.list_item_info,from,to));
         }
 
 
         @Override
         protected void onPostExecute(SimpleAdapter adapter){
-            favoriteListView.setAdapter(adapter);
+            infoListView.setAdapter(adapter);
             for (int i=0; i<adapter.getCount();i++){
                 HashMap<String, Object> hm = (HashMap<String, Object>) adapter.getItem(i);
                 String imgUrl = (String) hm.get("photo_path");
@@ -132,8 +118,8 @@ public class DisplayFavoritePlayersActivity extends AppCompatActivity {
 
                 // HashMap<String, Object> hmDownload = new HashMap<>();
                 hm.put("photo_path",imgUrl );
-                hm.put("position",i);
-                imageLoaderTask.execute(hm);
+                hm.put("position", i);
+               // imageLoaderTask.execute(hm);
             }
         }
 
@@ -174,12 +160,11 @@ public class DisplayFavoritePlayersActivity extends AppCompatActivity {
         protected void onPostExecute(HashMap<String, Object> result) {
             String path = (String) result.get("photo");
             int position = (Integer) result.get("position");
-            SimpleAdapter adapter = (SimpleAdapter) favoriteListView.getAdapter();
+            SimpleAdapter adapter = (SimpleAdapter) infoListView.getAdapter();
             HashMap<String, Object> hm = (HashMap<String, Object>) adapter.getItem(position);
             hm.put("photo", path);
             adapter.notifyDataSetChanged();
         }
     }
-
 
 }
