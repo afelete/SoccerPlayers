@@ -14,7 +14,12 @@
         <TextView style="@style/Widget.DescriptionBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="hello this is a test" />
+        android:text="@string/app_name"
+            android:singleLine="true"
+            android:textColor="#ffffff"
+            android:textStyle="bold"
+            android:theme="@style/AppTheme"
+            android:background="#3F51B5" />
 
     </TableRow>
 
@@ -35,9 +40,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
-        android:layout_marginEnd="@dimen/fab_margin"
-        android:layout_marginRight="@dimen/fab_margin_top"
-        android:layout_marginTop="@dimen/fab_margin_top"
         android:src="@drawable/ic_save_24dp"
         android:contentDescription="@string/save_description"
         app:layout_anchor="@android:id/list"

@@ -1,16 +1,21 @@
 package com.team1.soccerplayers.layout;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 import com.team1.soccerplayers.R;
 import com.team1.soccerplayers.players.PlayersJSONParser;
@@ -28,11 +33,21 @@ import java.util.HashMap;
 import java.util.List;
 
 public class DisplayFavoritePlayersActivity extends AppCompatActivity {
+    public final static String EXTRA_MESSAGE = "com.team1.soccerplayers.MESSAGE";
     ListView favoriteListView;
+    String playerName;
+    String userId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_favorite_players);
+
+        //get the share preferences to retrieve used id
+        SharedPreferences userSharedPreferences  = getSharedPreferences("UserFile", Context.MODE_PRIVATE);
+       userId = userSharedPreferences.getString("UserFile", null);
+        if(userId != null)
+        Toast.makeText(DisplayFavoritePlayersActivity.this, "User Id: " + userId, Toast.LENGTH_SHORT).show();
 
         // create ArrayAdapter to bind weatherList to the weatherListView
         String strUrl = "http://dhcp-141-216-26-99.umflint.edu/index.php";//baseUrl + module+".php";
@@ -42,22 +57,75 @@ public class DisplayFavoritePlayersActivity extends AppCompatActivity {
         favoriteListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
+                HashMap<String,String> map =(HashMap<String,String>)favoriteListView.getItemAtPosition(position);
+                playerName = map.get("player");
 
-                    profileView(view);
+                Toast.makeText(DisplayFavoritePlayersActivity.this, "palyer name: " + playerName, Toast.LENGTH_SHORT).show();
+
+
+                profileView(view);
             }
         });
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_my, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
     public void profileView(View view){
         Intent intent = new Intent(this,PlayerInfoActivity.class);
+        if (!playerName.isEmpty()) {
+            intent.putExtra(EXTRA_MESSAGE, playerName);
+
+        }
         startActivity(intent);
     }
     //private method to download the url
     private String downloadUrl(String strUrl) throws IOException {
 
         String data = null;
+       /* String request = null;
+
+
+        try{
+            // Set Request parameter
+            if (userId != null) {
+                request += "&" + URLEncoder.encode("data", "UTF-8") + "=" + userId;
+            }
+
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }*/
+
         try{
             URL url = new URL(strUrl);
             URLConnection urlConnection =  url.openConnection();
+
+            // Send POST userId request
+            //--------------------------------just added
+          /* urlConnection.setDoOutput(true);
+            OutputStreamWriter wr = new OutputStreamWriter(urlConnection.getOutputStream());
+            wr.write( request );
+            wr.flush();*/
+            //-----------------------------------------end
             BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
             StringBuilder sb = new StringBuilder();
             String line;
@@ -142,7 +210,7 @@ public class DisplayFavoritePlayersActivity extends AppCompatActivity {
 
     private class ImageLoaderTask extends  AsyncTask<HashMap<String, Object>, Void, HashMap<String, Object>>{
 
-        @SafeVarargs
+
         @Override
         protected final HashMap<String, Object> doInBackground(HashMap<String, Object>... hm) {
 

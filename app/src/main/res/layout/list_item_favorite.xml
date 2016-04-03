@@ -8,11 +8,10 @@
     android:minHeight="?android:listPreferredItemHeight"
     android:gravity="center_vertical">
 
-
     <ImageView
         android:duplicateParentState="true"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_marginLeft="0dp"
         android:id="@+id/favoriteImageView"
         android:contentDescription="@string/soccer_players" />

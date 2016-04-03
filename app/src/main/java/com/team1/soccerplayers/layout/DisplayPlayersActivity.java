@@ -1,18 +1,25 @@
 package com.team1.soccerplayers.layout;
 
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 import com.team1.soccerplayers.R;
+import com.team1.soccerplayers.customlist.CheckableLinearLayout;
 import com.team1.soccerplayers.players.PlayersJSONParser;
 
 import org.json.JSONObject;
@@ -25,35 +32,107 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 public class DisplayPlayersActivity extends ListActivity {
     // List of Player objects representing the Players
+
     ListView mListView;
+    Set<String> set;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_players);
-
+        set = new HashSet<>();
         //receive the intent and initiate the view
        //setListAdapter(new MyAdapter());
         // create ArrayAdapter to bind weatherList to the weatherListView
-        String strUrl = "http://dhcp-141-216-26-99.umflint.edu/index.php";//baseUrl + module+".php";
-        DownloadTask downloadTask = new DownloadTask();
-        downloadTask.execute(strUrl);
-
-        mListView = (ListView) findViewById(android.R.id.list);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+       // if (isOnline()) {
+            String strUrl = "http://dhcp-141-216-26-99.umflint.edu/index.php";//baseUrl + module+".php";
+            DownloadTask downloadTask = new DownloadTask();
+            downloadTask.execute(strUrl);
+            mListView = (ListView) findViewById(android.R.id.list);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View view) {
-                profileView(view);
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                boolean checked = ((CheckableLinearLayout) view).isChecked();
+
+                HashMap<String,String> map =(HashMap<String,String>)mListView.getItemAtPosition(position);
+                String value = map.get("player");
+                if (checked) {
+                    set.add(value);
+                    Toast.makeText(DisplayPlayersActivity.this, "palyer name: " + value, Toast.LENGTH_SHORT).show();
+                } else {
+                    set.remove(value);
+                    Toast.makeText(DisplayPlayersActivity.this, "palyer name: " + value, Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
 
+
+        // }
+            // else{
+            // Toast.makeText(this,"Netwok not Available", Toast.LENGTH_SHORT );
+            // }
+
+
+            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+            fab.setOnClickListener(new View.OnClickListener()
+
+            {
+                @Override
+                public void onClick (View view){
+                // CheckableLinearLayout checkableLinearLayout = new CheckableLinearLayout(this,Context.);
+                    if (!set.isEmpty()){
+                        // We need an Editor object to make preference changes.
+                        // All objects are from android.context.Context
+                        SharedPreferences sharedPreferences = getSharedPreferences("PlayersFile", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        for(String myset : set ) {
+                            editor.putString("playername", myset);
+                            Toast.makeText(DisplayPlayersActivity.this, "palyer name: " + myset, Toast.LENGTH_SHORT).show();
+                        }
+
+                        // Commit the edits!
+                        editor.commit();
+                        SharedPreferences userSharedPreferences = getSharedPreferences("UserFile", Context.MODE_PRIVATE);
+
+                        SharedPreferences.Editor userEditor = userSharedPreferences.edit();
+                        userEditor.putString("userid", "0001");
+                        userEditor.commit();
+
+                        //also sent data to the server
+                        profileView(view);
+                    }
+
+                    Toast.makeText(DisplayPlayersActivity.this, "Please Select your Favorite players to Follow." , Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        }
+                //method to check network availability and connectivity
+
+    public void onCheckboxClicked(View view) {
+                    // Is the view now checked?
+                    boolean checked = ((CheckableLinearLayout) view).isChecked();
+        if(checked)
+        {
+            set.add(String.valueOf(R.id.playername));
+        }
+        else
+        {
+            set.remove(String.valueOf(R.id.playername));
+        }
+
+    }
+    public boolean isOnline(){
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return (networkInfo != null && networkInfo.isConnected());
     }
     public void profileView(View view){
         Intent intent = new Intent(this,DisplayFavoritePlayersActivity.class);
@@ -123,8 +202,8 @@ public class DisplayPlayersActivity extends ListActivity {
                 e.printStackTrace();
             }
 
-            String[] from = {"photo","details"};
-            int[] to = {R.id.playersImageView,R.id.descText};
+            String[] from = {"photo","palyername","details"};
+            int[] to = {R.id.playersImageView,R.id.playername,R.id.descText};
 
             return (new SimpleAdapter(getBaseContext(),players,R.layout.list_item,from,to));
         }
@@ -162,10 +241,10 @@ public class DisplayPlayersActivity extends ListActivity {
                 URLConnection urlConnection =  url.openConnection();
 
                 File cacheDirectory = getBaseContext().getCacheDir();
-                File tmpFile = new File(cacheDirectory.getPath()+ position+".jpg");
+                File tmpFile = new File(cacheDirectory.getPath()+ position+".png");
                 FileOutputStream fileOutputStream = new FileOutputStream(tmpFile);
                 Bitmap b = BitmapFactory.decodeStream(urlConnection.getInputStream());
-                b.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
+                b.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
                 fileOutputStream.flush();
                 fileOutputStream.close();
                 HashMap<String, Object> hmBitmap = new HashMap<>();

@@ -21,6 +21,8 @@ import android.util.AttributeSet;
 import android.widget.Checkable;
 import android.widget.LinearLayout;
 
+
+
 /**
  * This is a simple wrapper for {@link LinearLayout} that implements the {@link Checkable}
  * interface by keeping an internal 'checked' state flag.
@@ -49,6 +51,7 @@ public class CheckableLinearLayout extends LinearLayout implements Checkable {
         }
     }
 
+
     public void toggle() {
         setChecked(!mChecked);
     }
@@ -61,4 +64,5 @@ public class CheckableLinearLayout extends LinearLayout implements Checkable {
         }
         return drawableState;
     }
+
 }

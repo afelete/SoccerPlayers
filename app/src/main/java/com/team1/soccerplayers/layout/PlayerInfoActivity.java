@@ -1,5 +1,6 @@
 package com.team1.soccerplayers.layout;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -19,17 +20,24 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 
 public class PlayerInfoActivity extends AppCompatActivity {
     ListView infoListView;
+    String playerName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player_info);
+        Intent intent = getIntent();
+        playerName = intent.getStringExtra(DisplayFavoritePlayersActivity.EXTRA_MESSAGE);
+
         String strUrl = "http://dhcp-141-216-26-99.umflint.edu/index.php";//baseUrl + module+".php";
         DownloadTask downloadTask = new DownloadTask();
         downloadTask.execute(strUrl);
@@ -40,10 +48,33 @@ public class PlayerInfoActivity extends AppCompatActivity {
     //private method to download the url
     private String downloadUrl(String strUrl) throws IOException {
 
+        String request = null;
+
+
+        try{
+            // Set Request parameter
+            if (playerName != null) {
+                request += "&" + URLEncoder.encode("data", "UTF-8") + "=" + playerName;
+            }
+
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+
         String data = null;
         try{
             URL url = new URL(strUrl);
             URLConnection urlConnection =  url.openConnection();
+
+            // Send POST player request
+            //--------------------------------just added
+            urlConnection.setDoOutput(true);
+            OutputStreamWriter wr = new OutputStreamWriter(urlConnection.getOutputStream());
+            wr.write( request );
+            wr.flush();
+            //-----------------------------------------end
             BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
             StringBuilder sb = new StringBuilder();
             String line;

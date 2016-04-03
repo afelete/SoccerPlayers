@@ -17,19 +17,27 @@
 
     <ImageView
         android:duplicateParentState="true"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_marginLeft="0dp"
         android:id="@+id/playersImageView"
-        android:contentDescription="@string/soccer_players" />
-
-    <TextView android:id="@+id/descText"
+        android:contentDescription="@string/soccer_players"
+        />
+    <TextView android:id="@+id/playername"
         android:duplicateParentState="true"
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="wrap_content"
         android:textAppearance="?android:textAppearanceMedium"
         android:textColor="@color/hideable_text_color" />
+    <TextView android:id="@+id/descText"
+        android:duplicateParentState="true"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:textColor="@color/hideable_text_color"
+        android:layout_below= "@id/playername"/>
 
     <!--
        The duplicateParentState attribute on this ImageView, along with the state list
@@ -46,7 +54,8 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:id="@+id/selectImageView"
-        android:contentDescription="@string/check_box" />
+        android:contentDescription="@string/check_box"
+        />
 
 
 </com.team1.soccerplayers.customlist.CheckableLinearLayout>
