@@ -98,10 +98,7 @@ public class DisplayFavoritePlayersActivity extends AppCompatActivity {
     }
     //private method to download the url
     private String downloadUrl(String strUrl) throws IOException {
-
-        String data = null;
-       /* String request = null;
-
+      /* String request = null;
 
         try{
             // Set Request parameter
@@ -114,7 +111,7 @@ public class DisplayFavoritePlayersActivity extends AppCompatActivity {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }*/
-
+        String data = null;
         try{
             URL url = new URL(strUrl);
             URLConnection urlConnection =  url.openConnection();
@@ -142,7 +139,7 @@ public class DisplayFavoritePlayersActivity extends AppCompatActivity {
 
     private class DownloadTask extends AsyncTask<String, Integer, String> {
 
-        String data = null;
+        String data = "";
         @Override
         protected String doInBackground(String... url) {
             try{

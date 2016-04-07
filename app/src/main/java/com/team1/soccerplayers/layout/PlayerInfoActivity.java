@@ -1,201 +1,176 @@
 package com.team1.soccerplayers.layout;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 import com.team1.soccerplayers.R;
-import com.team1.soccerplayers.players.PlayersJSONParser;
+import com.team1.soccerplayers.players.DocumentJSONParser;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 
 public class PlayerInfoActivity extends AppCompatActivity {
+    public final static String EXTRA_MESSAGE = "com.team1.soccerplayers.MESSAGE";
     ListView infoListView;
     String playerName;
+    String url;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player_info);
         Intent intent = getIntent();
         playerName = intent.getStringExtra(DisplayFavoritePlayersActivity.EXTRA_MESSAGE);
-
-        String strUrl = "http://dhcp-141-216-26-99.umflint.edu/index.php";//baseUrl + module+".php";
+        Toast.makeText(PlayerInfoActivity.this, "resrult: " + playerName, Toast.LENGTH_SHORT).show();
         DownloadTask downloadTask = new DownloadTask();
-        downloadTask.execute(strUrl);
+        downloadTask.execute();
         infoListView = (ListView) findViewById(android.R.id.list);
+        infoListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                HashMap<String, String> map = (HashMap<String, String>) infoListView.getItemAtPosition(position);
+                url = map.get("Url");
+                //int fadedTitleColor = getResources().getColor(R.color.marked_as_read_title_text);
+                // int fadedSummaryColor = getResources().getColor(R.color.marked_as_read_summary_text);
+                Toast.makeText(PlayerInfoActivity.this, "Url: " + url, Toast.LENGTH_SHORT).show();
+                profileView(view);
+            }
+        });
 
     }
 
-    //private method to download the url
-    private String downloadUrl(String strUrl) throws IOException {
+    public void profileView(View view) {
+        Bundle newsBundle = new Bundle();
 
-        String request = null;
+        Intent intent = new Intent(this, PlayerInfoActivity.class);
+        if (!url.isEmpty()) {
+            intent.putExtra(EXTRA_MESSAGE, playerName);
 
-
-        try{
-            // Set Request parameter
-            if (playerName != null) {
-                request += "&" + URLEncoder.encode("data", "UTF-8") + "=" + playerName;
-            }
-
-        } catch (UnsupportedEncodingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
-
-
-        String data = null;
-        try{
-            URL url = new URL(strUrl);
-            URLConnection urlConnection =  url.openConnection();
-
-            // Send POST player request
-            //--------------------------------just added
-            urlConnection.setDoOutput(true);
-            OutputStreamWriter wr = new OutputStreamWriter(urlConnection.getOutputStream());
-            wr.write( request );
-            wr.flush();
-            //-----------------------------------------end
-            BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = br.readLine())!= null){
-                sb.append(line);
-            }
-            data = sb.toString();
-            br.close();
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-        return data;
+        startActivity(intent);
     }
 
     private class DownloadTask extends AsyncTask<String, Integer, String> {
+        //private String APILink = "https://api.datamarket.azure.com/Bing/Search/v1/";
+        public String APILink = "https://api.datamarket.azure.com/Bing/Search/v1/News?Query=%27" + playerName + "%20%27&$format=json";
+        String data = "";
+        String nextUrl = APILink;
+        private String API_KEY = "CtZokufCIN2Fst6Ghgce8mOS6pdQL72R9P70zwviFsc";
 
-        String data = null;
         @Override
-        protected String doInBackground(String... url) {
-            try{
-                data = downloadUrl(url[0]);
-            }catch (Exception e){
-                Log.d("Baground Task", e.toString());
+        protected String doInBackground(String... params) {
+
+            //For some reason post method doesn't work.
+            //Only Get request work for this API.
+            //Prepare Post request.
+
+            //JSONArray to receive the result in JSON format
+
+            HttpClient httpClient = new DefaultHttpClient();
+
+            //Build Link
+            HttpGet httpget = new HttpGet(APILink);
+            String auth = API_KEY + ":" + API_KEY;
+            String encodedAuth = Base64.encodeToString(auth.getBytes(), Base64.NO_WRAP);
+            Log.e("", encodedAuth);
+            httpget.addHeader("Authorization", "Basic " + encodedAuth);
+
+            //Execute and get the response.
+            HttpResponse response = null;
+            try {
+                response = httpClient.execute(httpget);
+            } catch (IOException e1) {
+                e1.printStackTrace();
             }
+
+            HttpEntity entity = response.getEntity();
+            if (entity != null) {
+                InputStream inputStream = null;
+                try {
+                    inputStream = entity.getContent();
+                } catch (IllegalStateException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                String line;
+                try {
+                    while ((line = bufferedReader.readLine()) != null) {
+                        data += line;
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
             return data;
         }
-
         @Override
         protected void onPostExecute(String result) {
             ListViewLoaderTask listViewLoaderTask = new ListViewLoaderTask();
             listViewLoaderTask.execute(result);
+
         }
     }
 
     private class ListViewLoaderTask extends  AsyncTask<String, Void, SimpleAdapter>{
 
-        JSONObject jObject;
+
+        JSONObject bingResult = null;
+
 
         @Override
         protected SimpleAdapter doInBackground(String... strJson) {
             try{
-                jObject = new JSONObject(strJson[0]);
-                PlayersJSONParser playersJSONParser = new PlayersJSONParser();
-                playersJSONParser.parse(jObject);
+                JSONObject jObject = new JSONObject(strJson[0]);
+                bingResult = jObject.getJSONObject("d");
+                DocumentJSONParser documentJSONParser = new DocumentJSONParser();
+                documentJSONParser.parse(bingResult);
             }catch (Exception e){
                 e.printStackTrace();
             }
 
-            PlayersJSONParser playersJSONParser = new PlayersJSONParser();
-            List<HashMap<String, Object>> players = null;
+            DocumentJSONParser documentJSONParser = new DocumentJSONParser();
+            List<HashMap<String, Object>> documents = null;
             try{
-                players = playersJSONParser.parse(jObject);
+                documents = documentJSONParser.parse(bingResult);
 
             }catch (Exception e){
                 e.printStackTrace();
             }
 
-            String[] from = {"details"};
-            int[] to = {R.id.infoText};
+            String[] from = {"Title", "Description"};
+            int[] to = {R.id.infoText, R.id.sammaryText};
 
-            return (new SimpleAdapter(getBaseContext(),players,R.layout.list_item_info,from,to));
+            return (new SimpleAdapter(getBaseContext(), documents, R.layout.list_item_info, from, to));
         }
 
-
         @Override
-        protected void onPostExecute(SimpleAdapter adapter){
+        protected void onPostExecute(SimpleAdapter adapter) {
             infoListView.setAdapter(adapter);
-            for (int i=0; i<adapter.getCount();i++){
-                HashMap<String, Object> hm = (HashMap<String, Object>) adapter.getItem(i);
-                String imgUrl = (String) hm.get("photo_path");
-                ImageLoaderTask imageLoaderTask = new ImageLoaderTask();
 
-                // HashMap<String, Object> hmDownload = new HashMap<>();
-                hm.put("photo_path",imgUrl );
-                hm.put("position", i);
-               // imageLoaderTask.execute(hm);
-            }
-        }
-
-    }
-
-
-    private class ImageLoaderTask extends  AsyncTask<HashMap<String, Object>, Void, HashMap<String, Object>>{
-
-        @SafeVarargs
-        @Override
-        protected final HashMap<String, Object> doInBackground(HashMap<String, Object>... hm) {
-
-            String imgUrl = (String) hm[0].get("photo_path");
-            int position = (Integer) hm[0].get("position");
-            URL url;
-            try{
-                url = new URL(imgUrl);
-                URLConnection urlConnection =  url.openConnection();
-
-                File cacheDirectory = getBaseContext().getCacheDir();
-                File tmpFile = new File(cacheDirectory.getPath()+ position+".jpg");
-                FileOutputStream fileOutputStream = new FileOutputStream(tmpFile);
-                Bitmap b = BitmapFactory.decodeStream(urlConnection.getInputStream());
-                b.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
-                fileOutputStream.flush();
-                fileOutputStream.close();
-                HashMap<String, Object> hmBitmap = new HashMap<>();
-                hmBitmap.put("photo",tmpFile.getPath());
-                hmBitmap.put("position",position);
-                return hmBitmap;
-            }catch (Exception e ){
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(HashMap<String, Object> result) {
-            String path = (String) result.get("photo");
-            int position = (Integer) result.get("position");
-            SimpleAdapter adapter = (SimpleAdapter) infoListView.getAdapter();
-            HashMap<String, Object> hm = (HashMap<String, Object>) adapter.getItem(position);
-            hm.put("photo", path);
-            adapter.notifyDataSetChanged();
         }
     }
+
 
 }

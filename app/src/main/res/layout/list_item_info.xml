@@ -1,18 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="0dp"
-    android:paddingRight="8dp"
+    android:gravity="center_vertical"
     android:minHeight="?android:listPreferredItemHeight"
-    android:gravity="center_vertical">
+    android:orientation="horizontal"
+    android:paddingLeft="0dp"
+    android:paddingRight="8dp">
 
-    <TextView android:id="@+id/infoText"
-        android:duplicateParentState="true"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:textAppearanceMedium"
-        android:textColor="@color/hideable_text_color" />
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="@dimen/elevation">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/infoText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:duplicateParentState="true"
+                android:elevation="@dimen/elevation"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="#210c4e" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/sammaryText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:duplicateParentState="true"
+                android:elevation="@dimen/elevation"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="#271717" />
+
+        </TableRow>
+
+    </TableLayout>
+
+
 </LinearLayout>

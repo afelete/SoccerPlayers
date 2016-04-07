@@ -1,27 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="0dp"
-    android:paddingRight="8dp"
+    android:gravity="center_vertical"
     android:minHeight="?android:listPreferredItemHeight"
-    android:gravity="center_vertical">
+    android:orientation="horizontal"
+    android:paddingLeft="0dp"
+    android:paddingRight="8dp">
 
     <ImageView
-        android:duplicateParentState="true"
+        android:id="@+id/favoriteImageView"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginLeft="0dp"
-        android:id="@+id/favoriteImageView"
-        android:contentDescription="@string/soccer_players" />
+        android:background="#ffffff"
+        android:contentDescription="@string/soccer_players"
+        android:duplicateParentState="true" />
 
     <TextView android:id="@+id/favoriteText"
-        android:duplicateParentState="true"
         android:layout_width="0dp"
-        android:layout_weight="1"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:duplicateParentState="true"
         android:textAppearance="?android:textAppearanceMedium"
-        android:textColor="@color/hideable_text_color" />
+        android:textColor="#271717" />
 
 </LinearLayout>
