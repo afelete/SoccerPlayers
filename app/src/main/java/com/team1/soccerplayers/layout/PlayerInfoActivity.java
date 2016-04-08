@@ -1,6 +1,10 @@
 package com.team1.soccerplayers.layout;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -41,8 +45,18 @@ public class PlayerInfoActivity extends AppCompatActivity {
         Intent intent = getIntent();
         playerName = intent.getStringExtra(DisplayFavoritePlayersActivity.EXTRA_MESSAGE);
         Toast.makeText(PlayerInfoActivity.this, "resrult: " + playerName, Toast.LENGTH_SHORT).show();
-        DownloadTask downloadTask = new DownloadTask();
-        downloadTask.execute();
+
+
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
+            DownloadTask downloadTask = new DownloadTask();
+            downloadTask.execute();
+        } else {
+            Toast.makeText(PlayerInfoActivity.this, "Unable to Connect to the server, Please try later.", Toast.LENGTH_SHORT).show();
+        }
+
         infoListView = (ListView) findViewById(android.R.id.list);
         infoListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
@@ -71,10 +85,18 @@ public class PlayerInfoActivity extends AppCompatActivity {
 
     private class DownloadTask extends AsyncTask<String, Integer, String> {
         //private String APILink = "https://api.datamarket.azure.com/Bing/Search/v1/";
+
         public String APILink = "https://api.datamarket.azure.com/Bing/Search/v1/News?Query=%27" + playerName + "%20%27&$format=json";
         String data = "";
         String nextUrl = APILink;
         private String API_KEY = "CtZokufCIN2Fst6Ghgce8mOS6pdQL72R9P70zwviFsc";
+        private ProgressDialog Dialog = new ProgressDialog(PlayerInfoActivity.this);
+
+        @Override
+        protected void onPreExecute() {
+            Dialog.setMessage("Please wait..");
+            Dialog.show();
+        }
 
         @Override
         protected String doInBackground(String... params) {
@@ -127,6 +149,7 @@ public class PlayerInfoActivity extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(String result) {
+            Dialog.dismiss();
             ListViewLoaderTask listViewLoaderTask = new ListViewLoaderTask();
             listViewLoaderTask.execute(result);
 
@@ -137,7 +160,13 @@ public class PlayerInfoActivity extends AppCompatActivity {
 
 
         JSONObject bingResult = null;
+        private ProgressDialog Dialog = new ProgressDialog(PlayerInfoActivity.this);
 
+        @Override
+        protected void onPreExecute() {
+            Dialog.setMessage("Please wait..");
+            Dialog.show();
+        }
 
         @Override
         protected SimpleAdapter doInBackground(String... strJson) {
@@ -167,6 +196,7 @@ public class PlayerInfoActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(SimpleAdapter adapter) {
+            Dialog.dismiss();
             infoListView.setAdapter(adapter);
 
         }

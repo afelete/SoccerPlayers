@@ -1,10 +1,13 @@
 package com.team1.soccerplayers.layout;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -51,8 +54,18 @@ public class DisplayFavoritePlayersActivity extends AppCompatActivity {
 
         // create ArrayAdapter to bind weatherList to the weatherListView
         String strUrl = "http://dhcp-141-216-26-99.umflint.edu/index.php";//baseUrl + module+".php";
-        DownloadTask downloadTask = new DownloadTask();
-        downloadTask.execute(strUrl);
+
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
+            DownloadTask downloadTask = new DownloadTask();
+            downloadTask.execute(strUrl);
+        } else {
+            Toast.makeText(DisplayFavoritePlayersActivity.this, "Unable to Connect to the server, Please try later.", Toast.LENGTH_SHORT).show();
+        }
+
+
         favoriteListView = (ListView) findViewById(android.R.id.list);
         favoriteListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
@@ -85,7 +98,15 @@ public class DisplayFavoritePlayersActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
-
+        if (id == R.id.manage_account) {
+            return true;
+        }
+        if (id == R.id.manage_players) {
+            return true;
+        }
+        if (id == R.id.create_account) {
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
     public void profileView(View view){
@@ -138,8 +159,15 @@ public class DisplayFavoritePlayersActivity extends AppCompatActivity {
     }
 
     private class DownloadTask extends AsyncTask<String, Integer, String> {
-
         String data = "";
+        private ProgressDialog Dialog = new ProgressDialog(DisplayFavoritePlayersActivity.this);
+
+        @Override
+        protected void onPreExecute() {
+            Dialog.setMessage("Please wait..");
+            Dialog.show();
+        }
+
         @Override
         protected String doInBackground(String... url) {
             try{
@@ -152,14 +180,23 @@ public class DisplayFavoritePlayersActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
+            // Close progress dialog
+            Dialog.dismiss();
             ListViewLoaderTask listViewLoaderTask = new ListViewLoaderTask();
             listViewLoaderTask.execute(result);
         }
     }
 
     private class ListViewLoaderTask extends  AsyncTask<String, Void, SimpleAdapter>{
-
         JSONObject jObject;
+        private ProgressDialog Dialog = new ProgressDialog(DisplayFavoritePlayersActivity.this);
+
+        @Override
+        protected void onPreExecute() {
+            Dialog.setMessage("Please wait..");
+            Dialog.show();
+        }
+
 
         @Override
         protected SimpleAdapter doInBackground(String... strJson) {
@@ -189,6 +226,7 @@ public class DisplayFavoritePlayersActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(SimpleAdapter adapter){
+            Dialog.dismiss();
             favoriteListView.setAdapter(adapter);
             for (int i=0; i<adapter.getCount();i++){
                 HashMap<String, Object> hm = (HashMap<String, Object>) adapter.getItem(i);

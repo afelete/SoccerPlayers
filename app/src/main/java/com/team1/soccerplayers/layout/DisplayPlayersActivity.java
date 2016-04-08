@@ -1,6 +1,7 @@
 package com.team1.soccerplayers.layout;
 
 import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -52,8 +53,17 @@ public class DisplayPlayersActivity extends ListActivity {
         // create ArrayAdapter to bind weatherList to the weatherListView
        // if (isOnline()) {
             String strUrl = "http://dhcp-141-216-26-99.umflint.edu/index.php";//baseUrl + module+".php";
+
+
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
             DownloadTask downloadTask = new DownloadTask();
             downloadTask.execute(strUrl);
+        } else {
+            Toast.makeText(DisplayPlayersActivity.this, "Unable to Connect to the server, Please try later.", Toast.LENGTH_SHORT).show();
+        }
             mListView = (ListView) findViewById(android.R.id.list);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -162,6 +172,13 @@ public class DisplayPlayersActivity extends ListActivity {
     private class DownloadTask extends AsyncTask<String, Integer, String>{
 
         String data = null;
+        private ProgressDialog Dialog = new ProgressDialog(DisplayPlayersActivity.this);
+
+        @Override
+        protected void onPreExecute() {
+            Dialog.setMessage("Please wait..");
+            Dialog.show();
+        }
         @Override
         protected String doInBackground(String... url) {
             try{
@@ -174,6 +191,7 @@ public class DisplayPlayersActivity extends ListActivity {
 
         @Override
         protected void onPostExecute(String result) {
+            Dialog.dismiss();
             ListViewLoaderTask listViewLoaderTask = new ListViewLoaderTask();
             listViewLoaderTask.execute(result);
         }
@@ -182,6 +200,13 @@ public class DisplayPlayersActivity extends ListActivity {
     private class ListViewLoaderTask extends  AsyncTask<String, Void, SimpleAdapter>{
 
         JSONObject jObject;
+        private ProgressDialog Dialog = new ProgressDialog(DisplayPlayersActivity.this);
+
+        @Override
+        protected void onPreExecute() {
+            Dialog.setMessage("Please wait..");
+            Dialog.show();
+        }
 
         @Override
         protected SimpleAdapter doInBackground(String... strJson) {
@@ -211,6 +236,7 @@ public class DisplayPlayersActivity extends ListActivity {
 
         @Override
         protected void onPostExecute(SimpleAdapter adapter){
+            Dialog.dismiss();
             mListView.setAdapter(adapter);
             for (int i=0; i<adapter.getCount();i++){
                 HashMap<String, Object> hm = (HashMap<String, Object>) adapter.getItem(i);

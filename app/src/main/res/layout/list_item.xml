@@ -1,13 +1,13 @@
 <!--?xml version="1.0" encoding="utf-8"?-->
 <com.team1.soccerplayers.customlist.CheckableLinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="0dp"
-    android:paddingRight="8dp"
+    android:gravity="center_vertical"
     android:minHeight="?android:listPreferredItemHeight"
-    android:gravity="center_vertical">
+    android:orientation="horizontal"
+    android:paddingLeft="0dp"
+    android:paddingRight="8dp">
 
     <!--
        The duplicateParentState attribute on this TextView, along with the color state list
@@ -16,28 +16,28 @@
    -->
 
     <ImageView
-        android:duplicateParentState="true"
+        android:id="@+id/playersImageView"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginLeft="0dp"
-        android:id="@+id/playersImageView"
         android:contentDescription="@string/soccer_players"
+        android:duplicateParentState="true"
         />
     <TextView android:id="@+id/playername"
-        android:duplicateParentState="true"
         android:layout_width="0dp"
-        android:layout_weight="1"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:duplicateParentState="true"
         android:textAppearance="?android:textAppearanceMedium"
         android:textColor="@color/hideable_text_color" />
     <TextView android:id="@+id/descText"
-        android:duplicateParentState="true"
         android:layout_width="0dp"
-        android:layout_weight="1"
         android:layout_height="wrap_content"
+        android:layout_below="@id/playername"
+        android:layout_weight="1"
+        android:duplicateParentState="true"
         android:textAppearance="?android:textAppearanceMedium"
-        android:textColor="@color/hideable_text_color"
-        android:layout_below= "@id/playername"/>
+        android:textColor="@color/hideable_text_color" />
 
     <!--
        The duplicateParentState attribute on this ImageView, along with the state list
@@ -48,14 +48,14 @@
        ?android:listChoiceIndicatorMultiple or ?android:listChoiceIndicatorSingle. These
        are system theme attributes that reference a state list drawable.
    -->
-    <ImageView android:src="?android:listChoiceIndicatorMultiple"
-        android:duplicateParentState="true"
+    <ImageView
+        android:id="@+id/selectImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
-        android:id="@+id/selectImageView"
         android:contentDescription="@string/check_box"
+        android:duplicateParentState="true"
+        android:src="?android:listChoiceIndicatorMultiple"
         />
-
 
 </com.team1.soccerplayers.customlist.CheckableLinearLayout>

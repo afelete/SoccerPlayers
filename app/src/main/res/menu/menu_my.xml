@@ -2,6 +2,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.afelete.myfirstapp.MyActivity">
+
+    <item
+        android:id="@+id/manage_players"
+        android:orderInCategory="100"
+        android:title="@string/manage_players"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/manage_account"
+        android:orderInCategory="100"
+        android:title="@string/manage_account"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/create_account"
+        android:orderInCategory="100"
+        android:title="@string/create_account"
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
