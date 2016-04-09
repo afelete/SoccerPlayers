@@ -33,12 +33,21 @@
                 android:value=".layout.LoginActivity" />
         </activity>
         <activity android:name=".layout.DisplayFavoritePlayersActivity" />
-        <activity android:name=".layout.PlayerInfoActivity"
+        <activity
+            android:name=".layout.PlayerInfoActivity"
             android:parentActivityName=".layout.DisplayFavoritePlayersActivity">
-        <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value=".layout.DisplayFavoritePlayersActivity" />
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".layout.DisplayFavoritePlayersActivity" />
         </activity>
+        <activity
+            android:name=".layout.NewsWebActivity"
+            android:parentActivityName=".layout.PlayerInfoActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".layout.PlayerInfoActivity" />
+        </activity>
+        <activity android:name=".AddFavoritePlayersActivity"></activity>
     </application>
 
 </manifest>

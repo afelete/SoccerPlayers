@@ -37,7 +37,7 @@ public class PlayerInfoActivity extends AppCompatActivity {
     public final static String EXTRA_MESSAGE = "com.team1.soccerplayers.MESSAGE";
     ListView infoListView;
     String playerName;
-    String url;
+    String page;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,22 +62,28 @@ public class PlayerInfoActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 HashMap<String, String> map = (HashMap<String, String>) infoListView.getItemAtPosition(position);
-                url = map.get("Url");
+                page = map.get("Url");
                 //int fadedTitleColor = getResources().getColor(R.color.marked_as_read_title_text);
                 // int fadedSummaryColor = getResources().getColor(R.color.marked_as_read_summary_text);
-                Toast.makeText(PlayerInfoActivity.this, "Url: " + url, Toast.LENGTH_SHORT).show();
+
+                Toast.makeText(PlayerInfoActivity.this, "Url: " + page, Toast.LENGTH_SHORT).show();
                 profileView(view);
             }
         });
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
     public void profileView(View view) {
         Bundle newsBundle = new Bundle();
 
-        Intent intent = new Intent(this, PlayerInfoActivity.class);
-        if (!url.isEmpty()) {
-            intent.putExtra(EXTRA_MESSAGE, playerName);
+        Intent intent = new Intent(this, NewsWebActivity.class);
+        if (!page.isEmpty()) {
+            intent.putExtra(EXTRA_MESSAGE, page);
 
         }
         startActivity(intent);

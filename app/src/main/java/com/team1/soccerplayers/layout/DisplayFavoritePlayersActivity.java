@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import com.team1.soccerplayers.AddFavoritePlayersActivity;
 import com.team1.soccerplayers.R;
 import com.team1.soccerplayers.players.PlayersJSONParser;
 
@@ -102,6 +103,7 @@ public class DisplayFavoritePlayersActivity extends AppCompatActivity {
             return true;
         }
         if (id == R.id.manage_players) {
+            startActivity(new Intent(this, AddFavoritePlayersActivity.class));
             return true;
         }
         if (id == R.id.create_account) {
