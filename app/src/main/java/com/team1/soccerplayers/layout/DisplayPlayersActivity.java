@@ -52,7 +52,10 @@ public class DisplayPlayersActivity extends ListActivity {
        //setListAdapter(new MyAdapter());
         // create ArrayAdapter to bind weatherList to the weatherListView
        // if (isOnline()) {
-            String strUrl = "http://dhcp-141-216-26-99.umflint.edu/index.php";//baseUrl + module+".php";
+        //String strUrl = "http://dhcp-141-216-26-99.umflint.edu/index.php";//baseUrl + module+".php";
+
+        // get players from the database
+        String strUrl = "http://dhcp-141-216-26-99.umflint.edu/getAllPlayersWithUserSelection.php";//baseUrl + module+".php";
 
 
         ConnectivityManager connMgr = (ConnectivityManager)
@@ -123,7 +126,7 @@ public class DisplayPlayersActivity extends ListActivity {
                 }
             });
 
-        }
+    }
                 //method to check network availability and connectivity
 
     public void onCheckboxClicked(View view) {

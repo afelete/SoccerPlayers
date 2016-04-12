@@ -54,7 +54,7 @@ public class DisplayFavoritePlayersActivity extends AppCompatActivity {
         Toast.makeText(DisplayFavoritePlayersActivity.this, "User Id: " + userId, Toast.LENGTH_SHORT).show();
 
         // create ArrayAdapter to bind weatherList to the weatherListView
-        String strUrl = "http://dhcp-141-216-26-99.umflint.edu/index.php";//baseUrl + module+".php";
+        String strUrl = "http://dhcp-141-216-26-99.umflint.edu/getUserFavPlayers.php";//baseUrl + module+".php";
 
         ConnectivityManager connMgr = (ConnectivityManager)
                 getSystemService(Context.CONNECTIVITY_SERVICE);
