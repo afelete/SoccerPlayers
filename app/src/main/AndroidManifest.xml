@@ -47,7 +47,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".layout.PlayerInfoActivity" />
         </activity>
-        <activity android:name=".AddFavoritePlayersActivity"></activity>
+        <activity android:name=".layout.AddFavoritePlayersActivity"></activity>
     </application>
 
 </manifest>

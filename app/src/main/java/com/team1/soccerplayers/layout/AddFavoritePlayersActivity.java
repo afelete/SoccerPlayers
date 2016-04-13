@@ -1,4 +1,4 @@
-package com.team1.soccerplayers;
+package com.team1.soccerplayers.layout;
 
 import android.app.ListActivity;
 import android.app.ProgressDialog;
@@ -19,8 +19,8 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import com.team1.soccerplayers.R;
 import com.team1.soccerplayers.customlist.CheckableLinearLayout;
-import com.team1.soccerplayers.layout.DisplayFavoritePlayersActivity;
 import com.team1.soccerplayers.players.PlayersJSONParser;
 
 import org.json.JSONObject;
@@ -52,7 +52,7 @@ public class AddFavoritePlayersActivity extends ListActivity {
         //setListAdapter(new MyAdapter());
         // create ArrayAdapter to bind weatherList to the weatherListView
         // if (isOnline()) {
-        String strUrl = "http://dhcp-141-216-26-99.umflint.edu/index.php";//baseUrl + module+".php";
+        String strUrl = "http://dhcp-141-216-26-99.umflint.edu/getAllPlayersWithUserSelection.php";//baseUrl + module+".php";
 
 
         ConnectivityManager connMgr = (ConnectivityManager)

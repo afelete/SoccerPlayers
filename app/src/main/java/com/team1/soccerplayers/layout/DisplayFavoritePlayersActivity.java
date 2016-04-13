@@ -20,7 +20,6 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
-import com.team1.soccerplayers.AddFavoritePlayersActivity;
 import com.team1.soccerplayers.R;
 import com.team1.soccerplayers.players.PlayersJSONParser;
 
