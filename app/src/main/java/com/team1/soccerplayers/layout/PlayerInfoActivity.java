@@ -35,29 +35,51 @@ import java.util.List;
 
 public class PlayerInfoActivity extends AppCompatActivity {
     public final static String EXTRA_MESSAGE = "com.team1.soccerplayers.MESSAGE";
+    static final String STATE_PLAYER = "playerNames";
     ListView infoListView;
     String playerName;
     String page;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_player_info);
-        Intent intent = getIntent();
-        playerName = intent.getStringExtra(DisplayFavoritePlayersActivity.EXTRA_MESSAGE);
-        Toast.makeText(PlayerInfoActivity.this, "resrult: " + playerName, Toast.LENGTH_SHORT).show();
+        // Check whether we're recreating a previously destroyed instance
+        if (savedInstanceState != null) {
+            // Restore value of members from saved state
+            playerName = (String) savedInstanceState.get(STATE_PLAYER);
+            setContentView(R.layout.activity_player_info);
 
+            ConnectivityManager connMgr = (ConnectivityManager)
+                    getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            if (networkInfo != null && networkInfo.isConnected()) {
+                DownloadTask downloadTask = new DownloadTask();
+                downloadTask.execute();
+            } else {
+                Toast.makeText(PlayerInfoActivity.this, "Unable to Connect to the server, Please try later.", Toast.LENGTH_SHORT).show();
+            }
 
-        ConnectivityManager connMgr = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected()) {
-            DownloadTask downloadTask = new DownloadTask();
-            downloadTask.execute();
+            infoListView = (ListView) findViewById(android.R.id.list);
         } else {
-            Toast.makeText(PlayerInfoActivity.this, "Unable to Connect to the server, Please try later.", Toast.LENGTH_SHORT).show();
+            // Probably initialize members with default values for a new instance
+            setContentView(R.layout.activity_player_info);
+            Intent intent = getIntent();
+            playerName = intent.getStringExtra(DisplayFavoritePlayersActivity.EXTRA_MESSAGE);
+            //Toast.makeText(PlayerInfoActivity.this, "resrult: " + playerName, Toast.LENGTH_SHORT).show();
+
+
+            ConnectivityManager connMgr = (ConnectivityManager)
+                    getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            if (networkInfo != null && networkInfo.isConnected()) {
+                DownloadTask downloadTask = new DownloadTask();
+                downloadTask.execute();
+            } else {
+                Toast.makeText(PlayerInfoActivity.this, "Unable to Connect to the server, Please try later.", Toast.LENGTH_SHORT).show();
+            }
+
+            infoListView = (ListView) findViewById(android.R.id.list);
         }
 
-        infoListView = (ListView) findViewById(android.R.id.list);
         infoListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
@@ -72,11 +94,21 @@ public class PlayerInfoActivity extends AppCompatActivity {
         });
 
     }
-
     @Override
-    protected void onResume() {
-        super.onResume();
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save the user's current game state
+        savedInstanceState.putString(STATE_PLAYER, playerName);
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
     }
+    /*public void onRestoreInstanceState(Bundle savedInstanceState) {
+        // Always call the superclass so it can restore the view hierarchy
+        super.onRestoreInstanceState(savedInstanceState);
+
+        // Restore state members from saved instance
+
+    }*/
+
 
     public void profileView(View view) {
         Bundle newsBundle = new Bundle();
