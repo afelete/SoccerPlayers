@@ -49,35 +49,37 @@ public class DisplayFavoritePlayersActivity extends AppCompatActivity {
         //get the share preferences to retrieve used id
         SharedPreferences userSharedPreferences = getSharedPreferences("SoccerCapstoneUserAccount", Context.MODE_PRIVATE);
 
-        String userId = userSharedPreferences.getString("userId", "0");
+        String userId = userSharedPreferences.getString("userId", null);
 
 
-        String strUrl = "http://dhcp-141-216-26-99.umflint.edu/getUserFavPlayers.php?userId=" + userId;
+        if(userId != null) {
+            String strUrl = "http://dhcp-141-216-26-99.umflint.edu/getUserFavPlayers.php?userId=" + userId;
 
-        ConnectivityManager connMgr = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected()) {
-            DownloadTask downloadTask = new DownloadTask();
-            downloadTask.execute(strUrl);
-        } else {
-            Toast.makeText(DisplayFavoritePlayersActivity.this, "Unable to Connect to the server, Please try later.", Toast.LENGTH_SHORT).show();
-        }
-
-
-        favoriteListView = (ListView) findViewById(android.R.id.list);
-        favoriteListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                HashMap<String, String> map = (HashMap<String, String>) favoriteListView.getItemAtPosition(position);
-                playerName = map.get("player");
-
-                //Toast.makeText(DisplayFavoritePlayersActivity.this, "palyer name: " + playerName, Toast.LENGTH_SHORT).show();
-
-
-                profileView(view);
+            ConnectivityManager connMgr = (ConnectivityManager)
+                    getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            if (networkInfo != null && networkInfo.isConnected()) {
+                DownloadTask downloadTask = new DownloadTask();
+                downloadTask.execute(strUrl);
+            } else {
+                Toast.makeText(DisplayFavoritePlayersActivity.this, "Unable to Connect to the server, Please try later.", Toast.LENGTH_SHORT).show();
             }
-        });
+
+
+            favoriteListView = (ListView) findViewById(android.R.id.list);
+            favoriteListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                public void onItemClick(AdapterView<?> parent, View view,
+                                        int position, long id) {
+                    HashMap<String, String> map = (HashMap<String, String>) favoriteListView.getItemAtPosition(position);
+                    playerName = map.get("player");
+
+                    //Toast.makeText(DisplayFavoritePlayersActivity.this, "palyer name: " + playerName, Toast.LENGTH_SHORT).show();
+
+
+                    profileView(view);
+                }
+            });
+        }
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -119,7 +121,8 @@ public class DisplayFavoritePlayersActivity extends AppCompatActivity {
         }
         if (id == R.id.logout){
             SharedPreferences.Editor editor = getSharedPreferences("SoccerCapstoneUserAccount", MODE_PRIVATE).edit();
-            editor.putString("userId", null);
+            editor.clear();
+
             editor.commit();
 
             Intent intent = new Intent(this,LoginActivity.class);
