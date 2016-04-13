@@ -25,8 +25,8 @@ public class NewsWebActivity extends AppCompatActivity {
         WebView newsWebView = (WebView) findViewById(R.id.newsWebView);
         newsWebView.getSettings().setJavaScriptEnabled(true);
 
-        Toast urlplz = Toast.makeText(getApplicationContext(), newUrl, Toast.LENGTH_SHORT);
-        urlplz.show();
+        //Toast urlplz = Toast.makeText(getApplicationContext(), newUrl, Toast.LENGTH_SHORT);
+        //urlplz.show();
 
         newsWebView.setWebViewClient(new WebViewClient());
 

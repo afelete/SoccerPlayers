@@ -21,6 +21,7 @@
     <string name="create_account">Create Account</string>
     <string name="manage_account">Manage Account</string>
     <string name="manage_players">Manage Favorite Players</string>
+    <string name="logout">Log Out</string>
     <string name="skip_login">Skip</string>
     <string name="soccer_players">Players</string>
     <string name="check_box">Select Check Box</string>

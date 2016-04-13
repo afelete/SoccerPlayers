@@ -69,7 +69,7 @@ public class DisplayFavoritePlayersActivity extends AppCompatActivity {
         favoriteListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                HashMap<String,String> map =(HashMap<String,String>)favoriteListView.getItemAtPosition(position);
+                HashMap<String, String> map = (HashMap<String, String>) favoriteListView.getItemAtPosition(position);
                 playerName = map.get("player");
 
                 //Toast.makeText(DisplayFavoritePlayersActivity.this, "palyer name: " + playerName, Toast.LENGTH_SHORT).show();
@@ -112,16 +112,27 @@ public class DisplayFavoritePlayersActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
-        if (id == R.id.manage_account) {
+
+        if (id == R.id.manage_players) {
+            startActivity(new Intent(this, DisplayPlayersActivity.class));
             return true;
         }
-        if (id == R.id.manage_players) {
-            startActivity(new Intent(this, AddFavoritePlayersActivity.class));
+        if (id == R.id.logout){
+            SharedPreferences.Editor editor = getSharedPreferences("SoccerCapstoneUserAccount", MODE_PRIVATE).edit();
+            editor.putString("userId", null);
+            editor.commit();
+
+            Intent intent = new Intent(this,LoginActivity.class);
+            startActivity(intent);
+        }
+        /*
+        if (id == R.id.manage_account) {
             return true;
         }
         if (id == R.id.create_account) {
             return true;
         }
+        */
         return super.onOptionsItemSelected(item);
     }
     public void profileView(View view){

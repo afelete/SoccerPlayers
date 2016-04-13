@@ -88,7 +88,7 @@ public class PlayerInfoActivity extends AppCompatActivity {
                 //int fadedTitleColor = getResources().getColor(R.color.marked_as_read_title_text);
                 // int fadedSummaryColor = getResources().getColor(R.color.marked_as_read_summary_text);
 
-                Toast.makeText(PlayerInfoActivity.this, "Url: " + page, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(PlayerInfoActivity.this, "Url: " + page, Toast.LENGTH_SHORT).show();
                 profileView(view);
             }
         });
