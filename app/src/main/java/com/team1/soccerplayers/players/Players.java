@@ -20,11 +20,13 @@ package com.team1.soccerplayers.players;
  * Dummy data.
  */
 public class Players {
-        public final String playerName;
+    public final String playerId;
+    public final String playerName;
         public final String playerDescription;
         public final String photoURL;
 
-        public Players(String playerName, String playerDescription, String photoURL) {
+        public Players(String playerId, String playerName, String playerDescription, String photoURL) {
+            this.playerId = playerId;
             this.playerName = playerName;
             this.playerDescription = playerDescription;
             this.photoURL = photoURL;

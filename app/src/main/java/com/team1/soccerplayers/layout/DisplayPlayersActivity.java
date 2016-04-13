@@ -74,13 +74,13 @@ public class DisplayPlayersActivity extends ListActivity {
                 boolean checked = ((CheckableLinearLayout) view).isChecked();
 
                 HashMap<String,String> map =(HashMap<String,String>)mListView.getItemAtPosition(position);
-                String value = map.get("player");
+                String value = map.get("playerid");
                 if (checked) {
                     set.add(value);
-                    Toast.makeText(DisplayPlayersActivity.this, "palyer name: " + value, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(DisplayPlayersActivity.this, "palyer name: " + value, Toast.LENGTH_SHORT).show();
                 } else {
                     set.remove(value);
-                    Toast.makeText(DisplayPlayersActivity.this, "palyer name: " + value, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(DisplayPlayersActivity.this, "palyer name: " + value, Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -103,26 +103,60 @@ public class DisplayPlayersActivity extends ListActivity {
                     if (!set.isEmpty()){
                         // We need an Editor object to make preference changes.
                         // All objects are from android.context.Context
-                        SharedPreferences sharedPreferences = getSharedPreferences("PlayersFile", Context.MODE_PRIVATE);
+
+
+
+
+                        // Don't use shared preferences for this anymore
+                        /*
+                        SharedPreferences sharedPreferences = getSharedPreferences("SoccerCapstoneUserAccount", Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
+
                         for(String myset : set ) {
                             editor.putString("playername", myset);
-                            Toast.makeText(DisplayPlayersActivity.this, "palyer name: " + myset, Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(DisplayPlayersActivity.this, "palyer name: " + myset, Toast.LENGTH_SHORT).show();
                         }
 
+                        /*
                         // Commit the edits!
                         editor.commit();
                         SharedPreferences userSharedPreferences = getSharedPreferences("UserFile", Context.MODE_PRIVATE);
 
                         SharedPreferences.Editor userEditor = userSharedPreferences.edit();
-                        userEditor.putString("userid", "0001");
+                        userEditor.putString("userId", "0001");
                         userEditor.commit();
 
-                        //also sent data to the server
-                        profileView(view);
+                        */
+                        String playerIdsToAdd = "";
+                        for(String myset : set){
+                            if(myset.length() == 1){
+                                playerIdsToAdd += "0";
+                            }
+
+                            playerIdsToAdd += myset;
+                        }
+
+                        SharedPreferences userSharedPreferences = getSharedPreferences("SoccerCapstoneUserAccount", Context.MODE_PRIVATE);
+
+                        String userId = userSharedPreferences.getString("userId", null);
+
+                        String strUrl = "http://dhcp-141-216-26-99.umflint.edu/updateUserFavPlayers.php?userId=" + userId + "&playerIds=" + playerIdsToAdd;
+
+                        ConnectivityManager connMgr = (ConnectivityManager)
+                                getSystemService(Context.CONNECTIVITY_SERVICE);
+                        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+                        if (networkInfo != null && networkInfo.isConnected()) {
+                            DownloadTask2 downloadTask = new DownloadTask2();
+                            downloadTask.execute(strUrl);
+                        } else {
+                            Toast.makeText(DisplayPlayersActivity.this, "Unable to Connect to the server, Please try later.", Toast.LENGTH_SHORT).show();
+                        }
+
+                    } else {
+                        Toast.makeText(DisplayPlayersActivity.this, "Please Select at least 1 players to Follow." , Toast.LENGTH_SHORT).show();
                     }
 
-                    Toast.makeText(DisplayPlayersActivity.this, "Please Select your Favorite players to Follow." , Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(DisplayPlayersActivity.this, "Please Select your Favorite players to Follow." , Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -147,7 +181,7 @@ public class DisplayPlayersActivity extends ListActivity {
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         return (networkInfo != null && networkInfo.isConnected());
     }
-    public void profileView(View view){
+    public void profileView(){
         Intent intent = new Intent(this,DisplayFavoritePlayersActivity.class);
         startActivity(intent);
     }
@@ -233,6 +267,11 @@ public class DisplayPlayersActivity extends ListActivity {
             String[] from = {"photo","palyername","details"};
             int[] to = {R.id.playersImageView,R.id.playername,R.id.descText};
 
+            /*
+            String[] from = {"photo","palyername","details", "playerid"};
+            int[] to = {R.id.playersImageView,R.id.playername,R.id.descText, R.id.playerId};
+            */
+
             return (new SimpleAdapter(getBaseContext(),players,R.layout.list_item,from,to));
         }
 
@@ -298,4 +337,54 @@ public class DisplayPlayersActivity extends ListActivity {
     }
 
 
+
+    // For saving favorite players
+    private String downloadUrl2(String strUrl) throws IOException {
+
+        String data = null;
+        try{
+            URL url = new URL(strUrl);
+            URLConnection urlConnection =  url.openConnection();
+            BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = br.readLine())!= null){
+                sb.append(line);
+            }
+            data = sb.toString();
+            br.close();
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
+
+    private class DownloadTask2 extends AsyncTask<String, Integer, String>{
+
+        String data = null;
+        private ProgressDialog Dialog = new ProgressDialog(DisplayPlayersActivity.this);
+
+        @Override
+        protected void onPreExecute() {
+            Dialog.setMessage("Please wait..");
+            Dialog.show();
+        }
+        @Override
+        protected String doInBackground(String... url) {
+            try{
+                data = downloadUrl(url[0]);
+            }catch (Exception e){
+                Log.d("Baground Task", e.toString());
+            }
+            return data;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+            Dialog.dismiss();
+            profileView();
+
+        }
+    }
 }

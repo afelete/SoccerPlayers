@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
@@ -11,6 +12,8 @@ import android.content.Loader;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -20,6 +23,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -28,12 +32,22 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.team1.soccerplayers.R;
+import com.team1.soccerplayers.players.PlayersJSONParser;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -65,36 +79,30 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
-    private static String MY_PREFS_NAME = "SoccerCapstoneUserAccount";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // Get the shared preferences
-        SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
-        SharedPreferences userSharedPreferences = getSharedPreferences("UserFile", Context.MODE_PRIVATE);
-        String name = prefs.getString("name", null);
-        if (name != null) {
-            int idOfUser = prefs.getInt("id", 0); //0 is the default value.
-            Toast.makeText(LoginActivity.this, "User name: " + name, Toast.LENGTH_SHORT).show();
-            /*
-            * TODO
-            * Switch to Selected Player list
-             */
-        }
-        //added by afelete to call display favorite players activity
+        SharedPreferences userSharedPreferences = getSharedPreferences("SoccerCapstoneUserAccount", Context.MODE_PRIVATE);
 
-        String userId = userSharedPreferences.getString("userid", null);
+        String userId = userSharedPreferences.getString("userId", null);
         if (userId != null) {
 
-            Toast.makeText(LoginActivity.this, "User ID: " + userId, Toast.LENGTH_SHORT).show();
+            SharedPreferences.Editor editor = getSharedPreferences("SoccerCapstoneUserAccount", MODE_PRIVATE).edit();
+            editor.putString("userId", userId);
+            editor.commit();
+
+            // Toast.makeText(LoginActivity.this, "User ID: " + result, Toast.LENGTH_SHORT).show();
+
+            gotoDisplayFavPlayersActivity();
+            /*
+            //Toast.makeText(LoginActivity.this, "User ID: " + userId, Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this,DisplayFavoritePlayersActivity.class);
             startActivity(intent);
-            /*
-            * TODO
-            * Switch to Selected Player list
-             */
+            */
+
         }else {
             setContentView(R.layout.activity_login);
             // Set up the login form.
@@ -192,7 +200,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         View focusView = null;
 
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+        // !TextUtils.isEmpty(password) &&
+        if (!isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
@@ -220,12 +229,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
 
-            // ****TEST**** setting the sharedpreference
-            SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
+            processSqlCall("0", email, password, "registered");
+            /* ****TEST**** setting the sharedpreference
+            SharedPreferences.Editor editor = getSharedPreferences("SoccerCapstoneUserAccount", MODE_PRIVATE).edit();
             editor.putString("name", email);
             editor.putInt("id", 1111);
             editor.commit();
             // Toast.makeText(LoginActivity.this, "Shared preference created", Toast.LENGTH_SHORT).show();
+            */
         }
     }
 
@@ -386,8 +397,92 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
     public void skipLogin(View view){
+        processSqlCall("0", "", "", "unregistered");
+    }
+
+    public void processSqlCall(String userId, String userEmail, String userPassword, String userType)
+    {
+        String strUrl = "http://dhcp-141-216-26-99.umflint.edu/updateUser.php?userId=" + userId + "&userEmail=" + userEmail + "&userPassword=" + userPassword + "&userType=" + userType;
+
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
+            DownloadTask downloadTask = new DownloadTask();
+            downloadTask.execute(strUrl);
+        } else {
+            Toast.makeText(LoginActivity.this, "Unable to Connect to the server, Please try later.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void gotoDisplayPlayersActivity(){
         Intent intent = new Intent(this,DisplayPlayersActivity.class);
         startActivity(intent);
     }
+
+    public void gotoDisplayFavPlayersActivity(){
+        Intent intent = new Intent(this,DisplayFavoritePlayersActivity.class);
+        startActivity(intent);
+    }
+
+
+
+
+    //private method to download the url
+    private String downloadUrl(String strUrl) throws IOException {
+
+        String data = null;
+        try{
+            URL url = new URL(strUrl);
+            URLConnection urlConnection =  url.openConnection();
+            BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = br.readLine())!= null){
+                sb.append(line);
+            }
+            data = sb.toString();
+            br.close();
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
+
+    private class DownloadTask extends AsyncTask<String, Integer, String>{
+
+        String data = null;
+        private ProgressDialog Dialog = new ProgressDialog(LoginActivity.this);
+
+        @Override
+        protected void onPreExecute() {
+            Dialog.setMessage("Please wait..");
+            Dialog.show();
+        }
+        @Override
+        protected String doInBackground(String... url) {
+            try{
+                data = downloadUrl(url[0]);
+            }catch (Exception e){
+                Log.d("Baground Task", e.toString());
+            }
+            return data;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+            SharedPreferences.Editor editor = getSharedPreferences("SoccerCapstoneUserAccount", MODE_PRIVATE).edit();
+            editor.putString("userId", result);
+            editor.commit();
+
+           // Toast.makeText(LoginActivity.this, "User ID: " + result, Toast.LENGTH_SHORT).show();
+
+            Dialog.dismiss();
+            gotoDisplayPlayersActivity();
+
+        }
+    }
+
 }
 

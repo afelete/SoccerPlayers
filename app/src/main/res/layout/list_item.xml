@@ -38,7 +38,11 @@
         android:duplicateParentState="true"
         android:textAppearance="?android:textAppearanceMedium"
         android:textColor="@color/hideable_text_color" />
-
+    <!--
+    <TextView android:id="@+id/playerId"
+        android:layout_width="0"
+        android:layout_height="0" android:visibility="gone"/>
+-->
     <!--
        The duplicateParentState attribute on this ImageView, along with the state list
        drawable in the src attribute causes its image to change when its parent

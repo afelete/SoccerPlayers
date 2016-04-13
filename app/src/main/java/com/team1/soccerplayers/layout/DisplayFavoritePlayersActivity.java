@@ -47,13 +47,12 @@ public class DisplayFavoritePlayersActivity extends AppCompatActivity {
         setContentView(R.layout.activity_display_favorite_players);
 
         //get the share preferences to retrieve used id
-        SharedPreferences userSharedPreferences  = getSharedPreferences("UserFile", Context.MODE_PRIVATE);
-       userId = userSharedPreferences.getString("UserFile", null);
-        if(userId != null)
-        Toast.makeText(DisplayFavoritePlayersActivity.this, "User Id: " + userId, Toast.LENGTH_SHORT).show();
+        SharedPreferences userSharedPreferences = getSharedPreferences("SoccerCapstoneUserAccount", Context.MODE_PRIVATE);
 
-        // create ArrayAdapter to bind weatherList to the weatherListView
-        String strUrl = "http://dhcp-141-216-26-99.umflint.edu/getUserFavPlayers.php";//baseUrl + module+".php";
+        String userId = userSharedPreferences.getString("userId", "0");
+
+
+        String strUrl = "http://dhcp-141-216-26-99.umflint.edu/getUserFavPlayers.php?userId=" + userId;
 
         ConnectivityManager connMgr = (ConnectivityManager)
                 getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -73,7 +72,7 @@ public class DisplayFavoritePlayersActivity extends AppCompatActivity {
                 HashMap<String,String> map =(HashMap<String,String>)favoriteListView.getItemAtPosition(position);
                 playerName = map.get("player");
 
-                Toast.makeText(DisplayFavoritePlayersActivity.this, "palyer name: " + playerName, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(DisplayFavoritePlayersActivity.this, "palyer name: " + playerName, Toast.LENGTH_SHORT).show();
 
 
                 profileView(view);

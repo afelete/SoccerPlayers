@@ -58,16 +58,19 @@ public class PlayersJSONParser {
     private HashMap<String, Object> getPlayer(JSONObject jPlayer){
 
         HashMap<String, Object> player = new HashMap<>();
+        String playerId;
         String playerName;
         String photo;
         String details;
 
         try {
+            playerId = jPlayer.getString("playerid");
             playerName = jPlayer.getString("playername");
             details = jPlayer.getString("description");
             photo = jPlayer.getString("photo");
 
             details = playerName+ " " +details;
+            player.put("playerid", playerId);
             player.put("player", playerName);
             player.put("details", details);
             player.put("photo", R.mipmap.ic_launcher);
