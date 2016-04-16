@@ -1,5 +1,23 @@
+/*
+ * Copyright 2016 Capstone Project Team I CSC483 Software Engineering
+  * University of Michigan Flint
+ *
+ * Licensed under the Education License, Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
 package com.team1.soccerplayers.layout;
-
+/**
+ * @author: afelete Kita, Chris Wandor
+ * @email: afeletek@umflint.edu, afelete_k@yahoo.com
+ */
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -88,7 +106,7 @@ public class DisplayFavoritePlayersActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
+    /*@Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         // Save the user's current game state
 
@@ -102,7 +120,7 @@ public class DisplayFavoritePlayersActivity extends AppCompatActivity {
 
         // Restore state members from saved instance
 
-    }
+    }*/
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will

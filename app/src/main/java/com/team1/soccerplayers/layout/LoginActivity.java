@@ -1,4 +1,23 @@
+/*
+ * Copyright 2016 Capstone Project Team I CSC483 Software Engineering
+  * University of Michigan Flint
+ *
+ * Licensed under the Education License, Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
 package com.team1.soccerplayers.layout;
+/**
+ * @authors: afelete Kita, Chris Wandor
+ * @email:
+ */
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -32,14 +51,10 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.team1.soccerplayers.R;
-import com.team1.soccerplayers.players.PlayersJSONParser;
-
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -47,7 +62,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -250,6 +264,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         return password.length() > 4;
     }
 
+    //method to kill this activity in the background after the save button is pressed
+    @Override
+    protected void onPause() {
+        super.onPause();
+        finish();
+    }
+
     /**
      * Shows the progress UI and hides the login form.
      */
@@ -329,6 +350,54 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailView.setAdapter(adapter);
     }
 
+    public void skipLogin(View view) {
+        processSqlCall("0", "", "", "unregistered");
+    }
+
+    public void processSqlCall(String userId, String userEmail, String userPassword, String userType) {
+        String strUrl = "http://dhcp-141-216-26-99.umflint.edu/updateUser.php?userId=" + userId + "&userEmail=" + userEmail + "&userPassword=" + userPassword + "&userType=" + userType;
+
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
+            DownloadTask downloadTask = new DownloadTask();
+            downloadTask.execute(strUrl);
+        } else {
+            Toast.makeText(LoginActivity.this, "Unable to Connect to the server, Please try later.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void gotoDisplayPlayersActivity() {
+        Intent intent = new Intent(this, DisplayPlayersActivity.class);
+        startActivity(intent);
+    }
+
+    public void gotoDisplayFavPlayersActivity() {
+        Intent intent = new Intent(this, DisplayFavoritePlayersActivity.class);
+        startActivity(intent);
+    }
+
+    //private method to download the url
+    private String downloadUrl(String strUrl) throws IOException {
+
+        String data = null;
+        try {
+            URL url = new URL(strUrl);
+            URLConnection urlConnection = url.openConnection();
+            BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+            data = sb.toString();
+            br.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
 
     private interface ProfileQuery {
         String[] PROJECTION = {
@@ -395,58 +464,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = null;
             showProgress(false);
         }
-    }
-    public void skipLogin(View view){
-        processSqlCall("0", "", "", "unregistered");
-    }
-
-    public void processSqlCall(String userId, String userEmail, String userPassword, String userType)
-    {
-        String strUrl = "http://dhcp-141-216-26-99.umflint.edu/updateUser.php?userId=" + userId + "&userEmail=" + userEmail + "&userPassword=" + userPassword + "&userType=" + userType;
-
-        ConnectivityManager connMgr = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected()) {
-            DownloadTask downloadTask = new DownloadTask();
-            downloadTask.execute(strUrl);
-        } else {
-            Toast.makeText(LoginActivity.this, "Unable to Connect to the server, Please try later.", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    public void gotoDisplayPlayersActivity(){
-        Intent intent = new Intent(this,DisplayPlayersActivity.class);
-        startActivity(intent);
-    }
-
-    public void gotoDisplayFavPlayersActivity(){
-        Intent intent = new Intent(this,DisplayFavoritePlayersActivity.class);
-        startActivity(intent);
-    }
-
-
-
-
-    //private method to download the url
-    private String downloadUrl(String strUrl) throws IOException {
-
-        String data = null;
-        try{
-            URL url = new URL(strUrl);
-            URLConnection urlConnection =  url.openConnection();
-            BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = br.readLine())!= null){
-                sb.append(line);
-            }
-            data = sb.toString();
-            br.close();
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-        return data;
     }
 
     private class DownloadTask extends AsyncTask<String, Integer, String>{

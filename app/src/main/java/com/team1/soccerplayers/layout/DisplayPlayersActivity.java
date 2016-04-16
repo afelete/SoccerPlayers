@@ -1,5 +1,24 @@
-package com.team1.soccerplayers.layout;
+/*
+ * Copyright 2016 Capstone Project Team I CSC483 Software Engineering
+  * University of Michigan Flint
+ *
+ * Licensed under the Education License, Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
 
+package com.team1.soccerplayers.layout;
+/**
+ * @author: afelete Kita, Chris Wandor
+ * @email: afeletek@umflint.edu, afelete_k@yahoo.com
+ */
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -104,29 +123,6 @@ public class DisplayPlayersActivity extends ListActivity {
                         // We need an Editor object to make preference changes.
                         // All objects are from android.context.Context
 
-
-
-
-                        // Don't use shared preferences for this anymore
-                        /*
-                        SharedPreferences sharedPreferences = getSharedPreferences("SoccerCapstoneUserAccount", Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-
-                        for(String myset : set ) {
-                            editor.putString("playername", myset);
-                            //Toast.makeText(DisplayPlayersActivity.this, "palyer name: " + myset, Toast.LENGTH_SHORT).show();
-                        }
-
-                        /*
-                        // Commit the edits!
-                        editor.commit();
-                        SharedPreferences userSharedPreferences = getSharedPreferences("UserFile", Context.MODE_PRIVATE);
-
-                        SharedPreferences.Editor userEditor = userSharedPreferences.edit();
-                        userEditor.putString("userId", "0001");
-                        userEditor.commit();
-
-                        */
                         String playerIdsToAdd = "";
                         for(String myset : set){
                             if(myset.length() == 1){
@@ -185,6 +181,14 @@ public class DisplayPlayersActivity extends ListActivity {
         Intent intent = new Intent(this,DisplayFavoritePlayersActivity.class);
         startActivity(intent);
     }
+
+    //method to kill this activity in the background after the save button is pressed
+    @Override
+    protected void onPause() {
+        super.onPause();
+        finish();
+    }
+
     //private method to download the url
     private String downloadUrl(String strUrl) throws IOException{
 
@@ -201,6 +205,27 @@ public class DisplayPlayersActivity extends ListActivity {
             data = sb.toString();
             br.close();
         }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
+
+    // For saving favorite players
+    private String downloadUrl2(String strUrl) throws IOException {
+
+        String data = null;
+        try {
+            URL url = new URL(strUrl);
+            URLConnection urlConnection = url.openConnection();
+            BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+            data = sb.toString();
+            br.close();
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return data;
@@ -294,7 +319,6 @@ public class DisplayPlayersActivity extends ListActivity {
 
     }
 
-
     private class ImageLoaderTask extends  AsyncTask<HashMap<String, Object>, Void, HashMap<String, Object>>{
 
         @SafeVarargs
@@ -334,29 +358,6 @@ public class DisplayPlayersActivity extends ListActivity {
             hm.put("photo", path);
             adapter.notifyDataSetChanged();
         }
-    }
-
-
-
-    // For saving favorite players
-    private String downloadUrl2(String strUrl) throws IOException {
-
-        String data = null;
-        try{
-            URL url = new URL(strUrl);
-            URLConnection urlConnection =  url.openConnection();
-            BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = br.readLine())!= null){
-                sb.append(line);
-            }
-            data = sb.toString();
-            br.close();
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-        return data;
     }
 
     private class DownloadTask2 extends AsyncTask<String, Integer, String>{
