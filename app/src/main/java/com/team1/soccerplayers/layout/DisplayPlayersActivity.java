@@ -67,14 +67,8 @@ public class DisplayPlayersActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_players);
         set = new HashSet<>();
-        //receive the intent and initiate the view
-       //setListAdapter(new MyAdapter());
-        // create ArrayAdapter to bind weatherList to the weatherListView
-       // if (isOnline()) {
-        //String strUrl = "http://dhcp-141-216-26-99.umflint.edu/index.php";//baseUrl + module+".php";
-
         // get players from the database
-        String strUrl = "http://dhcp-141-216-26-99.umflint.edu/getAllPlayersWithUserSelection.php";//baseUrl + module+".php";
+        String strUrl = "https://secret-escarpment-69234.herokuapp.com/getAllPlayersWithUserSelection.php";
 
 
         ConnectivityManager connMgr = (ConnectivityManager)
@@ -96,21 +90,13 @@ public class DisplayPlayersActivity extends ListActivity {
                 String value = map.get("playerid");
                 if (checked) {
                     set.add(value);
-                    //Toast.makeText(DisplayPlayersActivity.this, "palyer name: " + value, Toast.LENGTH_SHORT).show();
                 } else {
                     set.remove(value);
-                    //Toast.makeText(DisplayPlayersActivity.this, "palyer name: " + value, Toast.LENGTH_SHORT).show();
+
                 }
 
             }
         });
-
-
-        // }
-            // else{
-            // Toast.makeText(this,"Netwok not Available", Toast.LENGTH_SHORT );
-            // }
-
 
             FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
             fab.setOnClickListener(new View.OnClickListener()
@@ -136,7 +122,7 @@ public class DisplayPlayersActivity extends ListActivity {
 
                         String userId = userSharedPreferences.getString("userId", null);
 
-                        String strUrl = "http://dhcp-141-216-26-99.umflint.edu/updateUserFavPlayers.php?userId=" + userId + "&playerIds=" + playerIdsToAdd;
+                        String strUrl = "https://secret-escarpment-69234.herokuapp.com/updateUserFavPlayers.php?userId=" + userId + "&playerIds=" + playerIdsToAdd;
 
                         ConnectivityManager connMgr = (ConnectivityManager)
                                 getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -152,31 +138,11 @@ public class DisplayPlayersActivity extends ListActivity {
                         Toast.makeText(DisplayPlayersActivity.this, "Please Select at least 1 players to Follow." , Toast.LENGTH_SHORT).show();
                     }
 
-                    //Toast.makeText(DisplayPlayersActivity.this, "Please Select your Favorite players to Follow." , Toast.LENGTH_SHORT).show();
                 }
             });
 
     }
-                //method to check network availability and connectivity
 
-    public void onCheckboxClicked(View view) {
-                    // Is the view now checked?
-                    boolean checked = ((CheckableLinearLayout) view).isChecked();
-        if(checked)
-        {
-            set.add(String.valueOf(R.id.playername));
-        }
-        else
-        {
-            set.remove(String.valueOf(R.id.playername));
-        }
-
-    }
-    public boolean isOnline(){
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        return (networkInfo != null && networkInfo.isConnected());
-    }
     public void profileView(){
         Intent intent = new Intent(this,DisplayFavoritePlayersActivity.class);
         startActivity(intent);

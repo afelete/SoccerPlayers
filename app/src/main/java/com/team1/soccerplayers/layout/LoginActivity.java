@@ -355,7 +355,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     public void processSqlCall(String userId, String userEmail, String userPassword, String userType) {
-        String strUrl = "http://dhcp-141-216-26-99.umflint.edu/updateUser.php?userId=" + userId + "&userEmail=" + userEmail + "&userPassword=" + userPassword + "&userType=" + userType;
+        String strUrl = "https://secret-escarpment-69234.herokuapp.com/updateUser.php?userId=" + userId + "&userEmail=" + userEmail + "&userPassword=" + userPassword + "&userType=" + userType;
 
         ConnectivityManager connMgr = (ConnectivityManager)
                 getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -488,14 +488,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         protected void onPostExecute(String result) {
-
+            Dialog.dismiss();
             SharedPreferences.Editor editor = getSharedPreferences("SoccerCapstoneUserAccount", MODE_PRIVATE).edit();
             editor.putString("userId", result);
             editor.commit();
-
-           // Toast.makeText(LoginActivity.this, "User ID: " + result, Toast.LENGTH_SHORT).show();
-
-            Dialog.dismiss();
             gotoDisplayPlayersActivity();
 
         }

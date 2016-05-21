@@ -27,7 +27,7 @@
     <string name="check_box">Select Check Box</string>
     <string name="server_url" translatable="false">http://dhcp-141-216-26-99.umflint.edu/</string>
     <string name="player_description">%s</string>
-    <string name="web_service_url">http://dhcp-141-216-26-99.umflint.edu/</string>
+    <string name="web_service_url" translatable="true">http://192.168.2.5/</string>
     <string name="module_name">first</string>
     <string name="read_error">Unable to read players Data</string>
     <string name="connection_error">Unable to establish a connection to the cloud</string>

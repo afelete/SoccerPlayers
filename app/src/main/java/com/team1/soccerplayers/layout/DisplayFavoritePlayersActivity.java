@@ -71,7 +71,7 @@ public class DisplayFavoritePlayersActivity extends AppCompatActivity {
 
 
         if(userId != null) {
-            String strUrl = "http://dhcp-141-216-26-99.umflint.edu/getUserFavPlayers.php?userId=" + userId;
+            String strUrl = "https://secret-escarpment-69234.herokuapp.com/getUserFavPlayers.php?userId=" + userId;
 
             ConnectivityManager connMgr = (ConnectivityManager)
                     getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -91,12 +91,14 @@ public class DisplayFavoritePlayersActivity extends AppCompatActivity {
                     HashMap<String, String> map = (HashMap<String, String>) favoriteListView.getItemAtPosition(position);
                     playerName = map.get("player");
 
-                    //Toast.makeText(DisplayFavoritePlayersActivity.this, "palyer name: " + playerName, Toast.LENGTH_SHORT).show();
+
 
 
                     profileView(view);
                 }
             });
+        } else {
+            Toast.makeText(DisplayFavoritePlayersActivity.this, "user ID is null " + userId, Toast.LENGTH_SHORT).show();
         }
     }
     @Override

@@ -70,7 +70,7 @@ public class AddFavoritePlayersActivity extends ListActivity {
         //setListAdapter(new MyAdapter());
         // create ArrayAdapter to bind weatherList to the weatherListView
         // if (isOnline()) {
-        String strUrl = "http://dhcp-141-216-26-99.umflint.edu/getAllPlayersWithUserSelection.php";//baseUrl + module+".php";
+        String strUrl = "https://shrouded-castle-74267.herokuapp.com/getAllPlayersWithUserSelection.php";//baseUrl + module+".php";
 
 
         ConnectivityManager connMgr = (ConnectivityManager)

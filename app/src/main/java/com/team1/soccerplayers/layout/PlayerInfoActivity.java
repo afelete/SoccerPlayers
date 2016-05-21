@@ -18,6 +18,7 @@ package com.team1.soccerplayers.layout;
  * @author: afelete Kita
  * @email: afeletek@umflint.edu, afelete_k@yahoo.com
  */
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -32,6 +33,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.team1.soccerplayers.R;
@@ -57,27 +59,13 @@ public class PlayerInfoActivity extends AppCompatActivity {
     ListView infoListView;
     String playerName;
     String page;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Check whether we're recreating a previously destroyed instance
-        if (savedInstanceState != null) {
-            // Restore value of members from saved state
-            playerName = (String) savedInstanceState.get(STATE_PLAYER);
-            setContentView(R.layout.activity_player_info);
 
-            ConnectivityManager connMgr = (ConnectivityManager)
-                    getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-            if (networkInfo != null && networkInfo.isConnected()) {
-                DownloadTask downloadTask = new DownloadTask();
-                downloadTask.execute();
-            } else {
-                Toast.makeText(PlayerInfoActivity.this, "Unable to Connect to the server, Please try later.", Toast.LENGTH_SHORT).show();
-            }
 
-            infoListView = (ListView) findViewById(android.R.id.list);
-        } else {
             // Probably initialize members with default values for a new instance
             setContentView(R.layout.activity_player_info);
             Intent intent = getIntent();
@@ -96,40 +84,41 @@ public class PlayerInfoActivity extends AppCompatActivity {
             }
 
             infoListView = (ListView) findViewById(android.R.id.list);
-        }
 
+        final TextView title1 = new TextView(this);
+        final TextView summary1 = new TextView(this);
         infoListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 HashMap<String, String> map = (HashMap<String, String>) infoListView.getItemAtPosition(position);
                 page = map.get("Url");
-                //int fadedTitleColor = getResources().getColor(R.color.marked_as_read_title_text);
-                // int fadedSummaryColor = getResources().getColor(R.color.marked_as_read_summary_text);
+                int fadedTitleColor = getResources().getColor(R.color.marked_as_read_title_text);
+                int fadedSummaryColor = getResources().getColor(R.color.marked_as_read_summary_text);
 
-                //Toast.makeText(PlayerInfoActivity.this, "Url: " + page, Toast.LENGTH_SHORT).show();
                 profileView(view);
             }
         });
-
     }
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        // Save the user's current game state
-        savedInstanceState.putString(STATE_PLAYER, playerName);
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
+        //  Parcelable state =  c
     }
-    /*public void onRestoreInstanceState(Bundle savedInstanceState) {
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
         // Always call the superclass so it can restore the view hierarchy
         super.onRestoreInstanceState(savedInstanceState);
 
         // Restore state members from saved instance
 
-    }*/
+    }
 
 
     public void profileView(View view) {
-        Bundle newsBundle = new Bundle();
+        // Bundle newsBundle = new Bundle();
+
 
         Intent intent = new Intent(this, NewsWebActivity.class);
         if (!page.isEmpty()) {
