@@ -56,8 +56,10 @@ import java.util.List;
 public class PlayerInfoActivity extends AppCompatActivity {
     public final static String EXTRA_MESSAGE = "com.team1.soccerplayers.MESSAGE";
     static final String STATE_PLAYER = "playerNames";
+    public String APILink;
     ListView infoListView;
     String playerName;
+    String firstName[];
     String page;
 
     @Override
@@ -70,6 +72,16 @@ public class PlayerInfoActivity extends AppCompatActivity {
             setContentView(R.layout.activity_player_info);
             Intent intent = getIntent();
             playerName = intent.getStringExtra(DisplayFavoritePlayersActivity.EXTRA_MESSAGE);
+        if (playerName.contains(" ")) {
+            firstName = playerName.split(" ");
+
+        }
+
+        if (playerName.contains(" ")) {
+            APILink = "https://api.datamarket.azure.com/Bing/Search/v1/News?Query=%27" + firstName[0].trim() + "%20" + firstName[1].trim() + "%20%27&$format=json";
+        } else {
+            APILink = "https://api.datamarket.azure.com/Bing/Search/v1/News?Query=%27" + playerName + "%20%27&$format=json";
+        }
             //Toast.makeText(PlayerInfoActivity.this, "resrult: " + playerName, Toast.LENGTH_SHORT).show();
 
 
@@ -131,7 +143,6 @@ public class PlayerInfoActivity extends AppCompatActivity {
     private class DownloadTask extends AsyncTask<String, Integer, String> {
         //private String APILink = "https://api.datamarket.azure.com/Bing/Search/v1/";
 
-        public String APILink = "https://api.datamarket.azure.com/Bing/Search/v1/News?Query=%27" + playerName + "%20%27&$format=json";
         String data = "";
         String nextUrl = APILink;
         private String API_KEY = "CtZokufCIN2Fst6Ghgce8mOS6pdQL72R9P70zwviFsc";
