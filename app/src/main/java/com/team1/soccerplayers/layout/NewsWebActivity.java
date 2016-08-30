@@ -33,6 +33,7 @@ import com.team1.soccerplayers.R;
 
 public class NewsWebActivity extends AppCompatActivity {
     String newUrl;
+    String playerName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

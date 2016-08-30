@@ -13,7 +13,7 @@
  * limitations under the License.
  *
  */
-package com.team1.soccerplayers.players;
+package com.team1.soccerplayers.document;
 /**
  * @author: afelete Kita
  * @email: afeletek@umflint.edu, afelete_k@yahoo.com

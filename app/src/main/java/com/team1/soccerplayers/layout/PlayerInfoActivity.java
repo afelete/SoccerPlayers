@@ -67,21 +67,28 @@ public class PlayerInfoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         // Check whether we're recreating a previously destroyed instance
 
+        if (savedInstanceState != null) {
+            // Restore value of members from saved state
+            playerName = savedInstanceState.getString(STATE_PLAYER);
+
+        } else {
 
             // Probably initialize members with default values for a new instance
             setContentView(R.layout.activity_player_info);
             Intent intent = getIntent();
             playerName = intent.getStringExtra(DisplayFavoritePlayersActivity.EXTRA_MESSAGE);
-        if (playerName.contains(" ")) {
-            firstName = playerName.split(" ");
 
         }
+            if (playerName.contains(" ")) {
+                firstName = playerName.split(" ");
 
-        if (playerName.contains(" ")) {
-            APILink = "https://api.datamarket.azure.com/Bing/Search/v1/News?Query=%27" + firstName[0].trim() + "%20" + firstName[1].trim() + "%20%27&$format=json";
-        } else {
-            APILink = "https://api.datamarket.azure.com/Bing/Search/v1/News?Query=%27" + playerName + "%20%27&$format=json";
-        }
+            }
+
+            if (playerName.contains(" ")) {
+                APILink = "https://api.datamarket.azure.com/Bing/Search/v1/News?Query=%27" + firstName[0].trim() + "%20" + firstName[1].trim() + "%20%27&$format=json";
+            } else {
+                APILink = "https://api.datamarket.azure.com/Bing/Search/v1/News?Query=%27" + playerName + "%20%27&$format=json";
+            }
             //Toast.makeText(PlayerInfoActivity.this, "resrult: " + playerName, Toast.LENGTH_SHORT).show();
 
 
@@ -97,23 +104,25 @@ public class PlayerInfoActivity extends AppCompatActivity {
 
             infoListView = (ListView) findViewById(android.R.id.list);
 
-        final TextView title1 = new TextView(this);
-        final TextView summary1 = new TextView(this);
-        infoListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                HashMap<String, String> map = (HashMap<String, String>) infoListView.getItemAtPosition(position);
-                page = map.get("Url");
-                int fadedTitleColor = getResources().getColor(R.color.marked_as_read_title_text);
-                int fadedSummaryColor = getResources().getColor(R.color.marked_as_read_summary_text);
+            final TextView title1 = new TextView(this);
+            final TextView summary1 = new TextView(this);
+            infoListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                public void onItemClick(AdapterView<?> parent, View view,
+                                        int position, long id) {
+                    HashMap<String, String> map = (HashMap<String, String>) infoListView.getItemAtPosition(position);
+                    page = map.get("Url");
+                    int fadedTitleColor = getResources().getColor(R.color.marked_as_read_title_text);
+                    int fadedSummaryColor = getResources().getColor(R.color.marked_as_read_summary_text);
 
-                profileView(view);
-            }
-        });
+                    profileView(view);
+                }
+            });
+
     }
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         // Always call the superclass so it can save the view hierarchy state
+        savedInstanceState.putString(STATE_PLAYER,playerName);
         super.onSaveInstanceState(savedInstanceState);
         //  Parcelable state =  c
     }
@@ -122,6 +131,7 @@ public class PlayerInfoActivity extends AppCompatActivity {
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         // Always call the superclass so it can restore the view hierarchy
         super.onRestoreInstanceState(savedInstanceState);
+        playerName = savedInstanceState.getString(STATE_PLAYER);
 
         // Restore state members from saved instance
 
@@ -129,7 +139,7 @@ public class PlayerInfoActivity extends AppCompatActivity {
 
 
     public void profileView(View view) {
-        // Bundle newsBundle = new Bundle();
+        //Bundle newsBundle = new Bundle();
 
 
         Intent intent = new Intent(this, NewsWebActivity.class);
@@ -137,6 +147,7 @@ public class PlayerInfoActivity extends AppCompatActivity {
             intent.putExtra(EXTRA_MESSAGE, page);
 
         }
+
         startActivity(intent);
     }
 
